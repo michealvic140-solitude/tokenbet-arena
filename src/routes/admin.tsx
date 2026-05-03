@@ -159,7 +159,7 @@ function RolesAdmin() {
 
   const toggle = async (uid: string, role: string, has: boolean) => {
     if (has) {
-      const { error } = await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", role);
+      const { error } = await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", role as "admin");
       if (error) { toast.error(error.message); return; }
     } else {
       const { error } = await supabase.from("user_roles").insert({ user_id: uid, role: role as "admin" | "moderator" | "gang_leader" | "shooter" | "registered" | "viewer" });
