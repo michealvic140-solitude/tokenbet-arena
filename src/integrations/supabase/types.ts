@@ -14,6 +14,125 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_escalations: {
+        Row: {
+          admin_id: string | null
+          admin_reply: string | null
+          ai_suggestion: string | null
+          ai_summary: string | null
+          conversation_id: string | null
+          created_at: string
+          id: string
+          reason: string
+          resolved_at: string | null
+          status: string
+          ticket_id: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_id?: string | null
+          admin_reply?: string | null
+          ai_suggestion?: string | null
+          ai_summary?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          reason: string
+          resolved_at?: string | null
+          status?: string
+          ticket_id?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_id?: string | null
+          admin_reply?: string | null
+          ai_suggestion?: string | null
+          ai_summary?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          reason?: string
+          resolved_at?: string | null
+          status?: string
+          ticket_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_escalations_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_escalations_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_messages: {
+        Row: {
+          content: string | null
+          conversation_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          role: string
+        }
+        Insert: {
+          content?: string | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role: string
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -703,6 +822,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_token_request: {
+        Args: { _admin_note?: string; _req_id: string }
+        Returns: undefined
+      }
+      cashout_bet: {
+        Args: { _bet_id: string; _fraction?: number }
+        Returns: number
+      }
+      deny_token_request: {
+        Args: { _admin_note?: string; _req_id: string }
+        Returns: undefined
+      }
+      edit_bet: {
+        Args: {
+          _add_selections: Json
+          _bet_id: string
+          _new_stake: number
+          _remove_selection_ids: string[]
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -712,6 +852,10 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_mod_or_admin: { Args: { _user_id: string }; Returns: boolean }
+      place_bet: {
+        Args: { _selections: Json; _stake: number }
+        Returns: string
+      }
     }
     Enums: {
       app_role:
