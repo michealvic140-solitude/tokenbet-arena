@@ -86,8 +86,10 @@ function TokenRequestsAdmin() {
 
   const action = async (r: TR, approve: boolean) => {
     const note = window.prompt(approve ? "Optional note:" : "Reason (optional):") ?? "";
-    const fn = approve ? "approve_token_request" : "deny_token_request";
-    const { error } = await supabase.rpc(fn, { _req_id: r.id, _admin_note: note || null });
+    const args = { _req_id: r.id, _admin_note: note || undefined };
+    const { error } = approve
+      ? await supabase.rpc("approve_token_request", args)
+      : await supabase.rpc("deny_token_request", args);
     if (error) toast.error(error.message); else toast.success(approve ? "Approved" : "Denied");
   };
 
@@ -160,7 +162,7 @@ function RolesAdmin() {
       const { error } = await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", role);
       if (error) { toast.error(error.message); return; }
     } else {
-      const { error } = await supabase.from("user_roles").insert({ user_id: uid, role: role as "admin" });
+      const { error } = await supabase.from("user_roles").insert({ user_id: uid, role: role as "admin" | "moderator" | "gang_leader" | "shooter" | "registered" | "viewer" });
       if (error) { toast.error(error.message); return; }
     }
     toast.success("Role updated");
@@ -267,15 +269,15 @@ function MatchesAdmin() {
     if (error) toast.error(error.message); else { toast.success("Match created"); load(); }
   };
 
-  const update = async (m: Mtch, patch: Partial<Mtch>) => {
-    const { error } = await supabase.from("matches").update(patch).eq("id", m.id);
+  const update = async (m: Mtch, patch: Record<string, unknown>) => {
+    const { error } = await supabase.from("matches").update(patch as never).eq("id", m.id);
     if (error) toast.error(error.message); else load();
   };
 
   const endMatch = async (m: Mtch) => {
     const winner = m.home_score > m.away_score ? "home" : m.home_score < m.away_score ? "away" : "draw";
     if (!confirm(`End match? Winner: ${winner.toUpperCase()}`)) return;
-    await update(m, { status: "ended", winner, ended_at: new Date().toISOString() } as Partial<Mtch>);
+    await update(m, { status: "ended", winner, ended_at: new Date().toISOString() });
     toast.success(`Match ended — winner: ${winner}`);
   };
 
