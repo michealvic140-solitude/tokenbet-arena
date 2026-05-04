@@ -1,46 +1,36 @@
 import { useEffect, useState } from "react";
 import { countdownParts, pad2 } from "@/lib/format";
 
-export function Countdown({ to, onZero, compact }: { to: string | Date; onZero?: () => void; compact?: boolean }) {
-  const [parts, setParts] = useState(() => countdownParts(to));
+interface Props { to: string | Date; compact?: boolean; gold?: boolean; onComplete?: () => void }
 
+export function Countdown({ to, compact, gold, onComplete }: Props) {
+  const [parts, setParts] = useState(() => countdownParts(to));
   useEffect(() => {
-    const id = setInterval(() => {
+    const t = setInterval(() => {
       const p = countdownParts(to);
       setParts(p);
-      if (p.total === 0) {
-        clearInterval(id);
-        onZero?.();
-      }
+      if (p.total === 0) onComplete?.();
     }, 1000);
-    return () => clearInterval(id);
-  }, [to, onZero]);
+    return () => clearInterval(t);
+  }, [to, onComplete]);
 
-  if (parts.total === 0) {
-    return <span className="text-live font-semibold">LIVE</span>;
-  }
-
+  const cls = gold ? "text-gold" : "";
   if (compact) {
-    return (
-      <span className="font-mono text-xs tabular-nums text-muted-foreground">
-        {parts.d > 0 && `${pad2(parts.d)}:`}
-        {pad2(parts.h)}:{pad2(parts.m)}:{pad2(parts.s)}
-      </span>
-    );
+    if (parts.d > 0) return <span className={`font-mono tabular-nums ${cls}`}>{parts.d}d {pad2(parts.h)}h</span>;
+    return <span className={`font-mono tabular-nums ${cls}`}>{pad2(parts.h)}:{pad2(parts.m)}:{pad2(parts.s)}</span>;
   }
-
   return (
-    <div className="flex items-center gap-1 font-mono text-sm tabular-nums">
-      <Box label="D" value={parts.d} />:<Box label="H" value={parts.h} />:<Box label="M" value={parts.m} />:<Box label="S" value={parts.s} />
+    <div className={`flex items-center justify-center gap-1.5 font-mono tabular-nums ${cls}`}>
+      <CdBox v={parts.d} l="D" />:<CdBox v={parts.h} l="H" />:<CdBox v={parts.m} l="M" />:<CdBox v={parts.s} l="S" />
     </div>
   );
 }
 
-function Box({ value, label }: { value: number; label: string }) {
+function CdBox({ v, l }: { v: number; l: string }) {
   return (
-    <span className="inline-flex flex-col items-center rounded bg-secondary px-1.5 py-0.5 leading-none">
-      <span className="text-foreground">{pad2(value)}</span>
-      <span className="text-[9px] text-muted-foreground">{label}</span>
-    </span>
+    <div className="flex flex-col items-center">
+      <div className="rounded-md glass-gold px-2 py-1 text-2xl font-black">{pad2(v)}</div>
+      <div className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{l}</div>
+    </div>
   );
 }

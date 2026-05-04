@@ -14,24 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      advertisements: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link: string | null
+          match_id: string | null
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          match_id?: string | null
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          match_id?: string | null
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
       ai_conversations: {
         Row: {
           created_at: string
+          escalated: boolean
           id: string
+          ticket_id: string | null
           title: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          escalated?: boolean
           id?: string
+          ticket_id?: string | null
           title?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          escalated?: boolean
           id?: string
+          ticket_id?: string | null
           title?: string | null
           updated_at?: string
           user_id?: string
@@ -98,6 +140,48 @@ export type Database = {
           },
         ]
       }
+      ai_logs: {
+        Row: {
+          completion_tokens: number | null
+          conversation_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          model: string | null
+          prompt_preview: string | null
+          prompt_tokens: number | null
+          response_preview: string | null
+          ticket_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completion_tokens?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          model?: string | null
+          prompt_preview?: string | null
+          prompt_tokens?: number | null
+          response_preview?: string | null
+          ticket_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completion_tokens?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          model?: string | null
+          prompt_preview?: string | null
+          prompt_tokens?: number | null
+          response_preview?: string | null
+          ticket_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_messages: {
         Row: {
           content: string | null
@@ -132,6 +216,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      announcements: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link: string | null
+          sort_order: number
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          sort_order?: number
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          sort_order?: number
+          title?: string | null
+        }
+        Relationships: []
       }
       audit_logs: {
         Row: {
@@ -339,6 +456,141 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          countdown_to: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          countdown_to?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          countdown_to?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leaderboard_factions: {
+        Row: {
+          id: string
+          name: string
+          notes: string | null
+          rank: number
+          score: number
+          type: string
+          updated_at: string
+          week_start: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          notes?: string | null
+          rank: number
+          score?: number
+          type: string
+          updated_at?: string
+          week_start?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          notes?: string | null
+          rank?: number
+          score?: number
+          type?: string
+          updated_at?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      leaderboard_players: {
+        Row: {
+          gang_or_faction: string | null
+          gf_type: string | null
+          id: string
+          player_name: string
+          player_role: string | null
+          rank: number
+          score: number
+          updated_at: string
+          week_start: string
+        }
+        Insert: {
+          gang_or_faction?: string | null
+          gf_type?: string | null
+          id?: string
+          player_name: string
+          player_role?: string | null
+          rank: number
+          score?: number
+          updated_at?: string
+          week_start?: string
+        }
+        Update: {
+          gang_or_faction?: string | null
+          gf_type?: string | null
+          id?: string
+          player_name?: string
+          player_role?: string | null
+          rank?: number
+          score?: number
+          updated_at?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      live_highlights: {
+        Row: {
+          created_at: string
+          custom_subtitle: string | null
+          custom_title: string | null
+          id: string
+          is_active: boolean
+          match_id: string | null
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          custom_subtitle?: string | null
+          custom_title?: string | null
+          id?: string
+          is_active?: boolean
+          match_id?: string | null
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          custom_subtitle?: string | null
+          custom_title?: string | null
+          id?: string
+          is_active?: boolean
+          match_id?: string | null
+          sort_order?: number
+        }
+        Relationships: []
+      }
       live_score_events: {
         Row: {
           created_at: string
@@ -418,13 +670,16 @@ export type Database = {
         Row: {
           away_score: number
           away_team_id: string
+          bookings_locked: boolean
           created_at: string
           ended_at: string | null
           home_score: number
           home_team_id: string
           id: string
+          image_url: string | null
           kickoff_time: string
           league: string | null
+          location: string | null
           match_minute: number | null
           status: Database["public"]["Enums"]["match_status"]
           updated_at: string
@@ -433,13 +688,16 @@ export type Database = {
         Insert: {
           away_score?: number
           away_team_id: string
+          bookings_locked?: boolean
           created_at?: string
           ended_at?: string | null
           home_score?: number
           home_team_id: string
           id?: string
+          image_url?: string | null
           kickoff_time: string
           league?: string | null
+          location?: string | null
           match_minute?: number | null
           status?: Database["public"]["Enums"]["match_status"]
           updated_at?: string
@@ -448,13 +706,16 @@ export type Database = {
         Update: {
           away_score?: number
           away_team_id?: string
+          bookings_locked?: boolean
           created_at?: string
           ended_at?: string | null
           home_score?: number
           home_team_id?: string
           id?: string
+          image_url?: string | null
           kickoff_time?: string
           league?: string | null
+          location?: string | null
           match_minute?: number | null
           status?: Database["public"]["Enums"]["match_status"]
           updated_at?: string
@@ -596,10 +857,13 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          country: string | null
           created_at: string
           discord_username: string | null
           email: string | null
           full_name: string
+          gang_faction: string | null
+          gang_type: string | null
           id: string
           phone: string | null
           server: string
@@ -608,10 +872,13 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           discord_username?: string | null
           email?: string | null
           full_name: string
+          gang_faction?: string | null
+          gang_type?: string | null
           id: string
           phone?: string | null
           server?: string
@@ -620,10 +887,13 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           discord_username?: string | null
           email?: string | null
           full_name?: string
+          gang_faction?: string | null
+          gang_type?: string | null
           id?: string
           phone?: string | null
           server?: string
@@ -822,10 +1092,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_grant_tokens: {
+        Args: { _amount: number; _note?: string; _user_id: string }
+        Returns: undefined
+      }
       approve_token_request: {
         Args: { _admin_note?: string; _req_id: string }
         Returns: undefined
       }
+      book_by_code: { Args: { _code: string; _stake: number }; Returns: string }
       cashout_bet: {
         Args: { _bet_id: string; _fraction?: number }
         Returns: number
@@ -843,6 +1118,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      gen_booking_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -855,6 +1131,10 @@ export type Database = {
       place_bet: {
         Args: { _selections: Json; _stake: number }
         Returns: string
+      }
+      settle_match: {
+        Args: { _match_id: string; _winner: string }
+        Returns: undefined
       }
     }
     Enums: {
