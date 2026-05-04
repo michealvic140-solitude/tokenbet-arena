@@ -5,6 +5,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Toaster } from "@/components/ui/sonner";
 import { BetSlipProvider } from "@/lib/betslip";
 import { BetSlipFab } from "@/components/BetSlip";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 function NotFoundComponent() {
   return (
@@ -54,6 +55,7 @@ function RootComponent() {
   return (
     <AuthProvider>
       <BetSlipProvider>
+        <AnimatedBackground />
         <div className="relative z-10 flex min-h-screen flex-col">
           <AppHeader />
           <main className="flex-1"><Outlet /></main>
