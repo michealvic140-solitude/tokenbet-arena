@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { formatTokens } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export function AppHeader() {
   const { user, profile, isAdmin, signOut } = useAuth();
@@ -25,14 +26,20 @@ export function AppHeader() {
           <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-gold-gradient shadow-[var(--shadow-gold)] transition group-hover:scale-105">
             <Crosshair className="h-5 w-5 text-accent-foreground" strokeWidth={2.5} />
           </div>
-          <span className="text-lg font-black tracking-tight brand">SHOOTERS<span className="ml-1 text-primary">BET</span></span>
+          <span className="hidden text-sm font-black tracking-tight brand sm:inline">
+            LOMITA<span className="ml-1 text-primary">SHOOTERS</span><span className="ml-1">LEAGUE</span>
+          </span>
+          <span className="text-base font-black brand sm:hidden">LSL</span>
         </Link>
 
-        <nav className="ml-4 hidden items-center gap-1 md:flex">
+        <nav className="ml-4 hidden items-center gap-1 lg:flex">
           <NavLink to="/">Sports</NavLink>
           <NavLink to="/live">Live</NavLink>
           <NavLink to="/dashboard">My Bets</NavLink>
+          <NavLink to="/tokens">Tokens</NavLink>
+          <NavLink to="/chat">Chat</NavLink>
           <NavLink to="/support">Support</NavLink>
+          <NavLink to="/terms">Terms</NavLink>
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
@@ -42,6 +49,7 @@ export function AppHeader() {
                 <Coins className="h-4 w-4 text-accent" />
                 <span className="tabular-nums text-gold">{formatTokens(profile?.token_balance ?? 0)}</span>
               </Link>
+              <NotificationBell />
               {isAdmin && (
                 <Link to="/admin" className="hidden md:block">
                   <Button size="sm" variant="outline" className="gap-1 border-primary/40 text-primary hover:bg-primary/10"><Shield className="h-3.5 w-3.5" /> Admin</Button>
@@ -64,13 +72,15 @@ export function AppHeader() {
       </div>
 
       {open && (
-        <nav className="border-t border-white/5 glass-strong px-4 py-2 md:hidden">
+        <nav className="border-t border-white/5 glass-strong px-4 py-2 lg:hidden">
           <div className="flex flex-col gap-1">
             <NavLink to="/" onClick={() => setOpen(false)}>Sports</NavLink>
             <NavLink to="/live" onClick={() => setOpen(false)}>Live</NavLink>
             <NavLink to="/dashboard" onClick={() => setOpen(false)}>My Bets</NavLink>
             <NavLink to="/tokens" onClick={() => setOpen(false)}>Tokens</NavLink>
+            <NavLink to="/chat" onClick={() => setOpen(false)}>Chat</NavLink>
             <NavLink to="/support" onClick={() => setOpen(false)}><LifeBuoy className="mr-1 inline h-3.5 w-3.5" /> Support</NavLink>
+            <NavLink to="/terms" onClick={() => setOpen(false)}>Terms</NavLink>
             {isAdmin && <NavLink to="/admin" onClick={() => setOpen(false)}>Admin</NavLink>}
           </div>
         </nav>
