@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { BetSlipProvider } from "@/lib/betslip";
 import { BetSlipFab } from "@/components/BetSlip";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { ConfirmDialogHost, PromptDialogHost } from "@/components/ConfirmDialog";
 
 function NotFoundComponent() {
   return (
@@ -69,6 +70,8 @@ function RootComponent() {
           <main className="flex-1"><Outlet /></main>
         </div>
         <BetSlipFab />
+        <ConfirmDialogHost />
+        <PromptDialogHost />
         <Toaster theme="dark" position="top-right" />
       </BetSlipProvider>
     </AuthProvider>

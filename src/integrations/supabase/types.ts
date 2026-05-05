@@ -250,6 +250,39 @@ export type Database = {
         }
         Relationships: []
       }
+      appeals: {
+        Row: {
+          admin_reply: string | null
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          resolved_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_reply?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          message: string
+          resolved_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_reply?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          resolved_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -336,9 +369,11 @@ export type Database = {
           id: string
           payout: number | null
           potential_payout: number
+          selection_hash: string | null
           settled_at: string | null
           stake: number
           status: Database["public"]["Enums"]["bet_status"]
+          ticket_code: string | null
           total_odds: number
           user_id: string
         }
@@ -349,9 +384,11 @@ export type Database = {
           id?: string
           payout?: number | null
           potential_payout: number
+          selection_hash?: string | null
           settled_at?: string | null
           stake: number
           status?: Database["public"]["Enums"]["bet_status"]
+          ticket_code?: string | null
           total_odds: number
           user_id: string
         }
@@ -362,9 +399,11 @@ export type Database = {
           id?: string
           payout?: number | null
           potential_payout?: number
+          selection_hash?: string | null
           settled_at?: string | null
           stake?: number
           status?: Database["public"]["Enums"]["bet_status"]
+          ticket_code?: string | null
           total_odds?: number
           user_id?: string
         }
@@ -806,6 +845,54 @@ export type Database = {
           },
         ]
       }
+      platform_settings: {
+        Row: {
+          about_us: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          contact_sms: string | null
+          contact_whatsapp: string | null
+          id: number
+          maintenance_message: string | null
+          maintenance_mode: boolean
+          max_payout: number
+          max_stake: number
+          min_stake: number
+          updated_at: string
+          why_trust_us: string | null
+        }
+        Insert: {
+          about_us?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contact_sms?: string | null
+          contact_whatsapp?: string | null
+          id?: number
+          maintenance_message?: string | null
+          maintenance_mode?: boolean
+          max_payout?: number
+          max_stake?: number
+          min_stake?: number
+          updated_at?: string
+          why_trust_us?: string | null
+        }
+        Update: {
+          about_us?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contact_sms?: string | null
+          contact_whatsapp?: string | null
+          id?: number
+          maintenance_message?: string | null
+          maintenance_mode?: boolean
+          max_payout?: number
+          max_stake?: number
+          min_stake?: number
+          updated_at?: string
+          why_trust_us?: string | null
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           created_at: string
@@ -857,6 +944,8 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          ban_reason: string | null
+          banned_at: string | null
           country: string | null
           created_at: string
           discord_username: string | null
@@ -865,13 +954,20 @@ export type Database = {
           gang_faction: string | null
           gang_type: string | null
           id: string
+          is_banned: boolean
+          is_muted: boolean
+          is_restricted: boolean
+          mute_reason: string | null
           phone: string | null
+          restrict_reason: string | null
           server: string
           token_balance: number
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          ban_reason?: string | null
+          banned_at?: string | null
           country?: string | null
           created_at?: string
           discord_username?: string | null
@@ -880,13 +976,20 @@ export type Database = {
           gang_faction?: string | null
           gang_type?: string | null
           id: string
+          is_banned?: boolean
+          is_muted?: boolean
+          is_restricted?: boolean
+          mute_reason?: string | null
           phone?: string | null
+          restrict_reason?: string | null
           server?: string
           token_balance?: number
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          ban_reason?: string | null
+          banned_at?: string | null
           country?: string | null
           created_at?: string
           discord_username?: string | null
@@ -895,12 +998,88 @@ export type Database = {
           gang_faction?: string | null
           gang_type?: string | null
           id?: string
+          is_banned?: boolean
+          is_muted?: boolean
+          is_restricted?: boolean
+          mute_reason?: string | null
           phone?: string | null
+          restrict_reason?: string | null
           server?: string
           token_balance?: number
           updated_at?: string
         }
         Relationships: []
+      }
+      promo_codes: {
+        Row: {
+          amount: number
+          code: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number
+          note: string | null
+          uses: number
+        }
+        Insert: {
+          amount: number
+          code: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          note?: string | null
+          uses?: number
+        }
+        Update: {
+          amount?: number
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          note?: string | null
+          uses?: number
+        }
+        Relationships: []
+      }
+      promo_redemptions: {
+        Row: {
+          amount: number
+          id: string
+          promo_id: string
+          redeemed_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          id?: string
+          promo_id: string
+          redeemed_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          id?: string
+          promo_id?: string
+          redeemed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_redemptions_promo_id_fkey"
+            columns: ["promo_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       support_tickets: {
         Row: {
@@ -953,6 +1132,36 @@ export type Database = {
           logo_url?: string | null
           name?: string
           short_name?: string | null
+        }
+        Relationships: []
+      }
+      terms_sections: {
+        Row: {
+          body: string
+          category: string
+          id: string
+          is_active: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          category: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1092,8 +1301,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_ban_user: {
+        Args: { _ban: boolean; _reason?: string; _user_id: string }
+        Returns: undefined
+      }
       admin_grant_tokens: {
         Args: { _amount: number; _note?: string; _user_id: string }
+        Returns: undefined
+      }
+      admin_mute_user: {
+        Args: { _mute: boolean; _reason?: string; _user_id: string }
+        Returns: undefined
+      }
+      admin_remove_tokens: {
+        Args: { _amount: number; _reason: string; _user_id: string }
+        Returns: undefined
+      }
+      admin_restrict_user: {
+        Args: { _reason?: string; _restrict: boolean; _user_id: string }
         Returns: undefined
       }
       approve_token_request: {
@@ -1119,6 +1344,7 @@ export type Database = {
         Returns: undefined
       }
       gen_booking_code: { Args: never; Returns: string }
+      gen_ticket_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1132,6 +1358,7 @@ export type Database = {
         Args: { _selections: Json; _stake: number }
         Returns: string
       }
+      redeem_promo: { Args: { _code: string }; Returns: number }
       settle_match: {
         Args: { _match_id: string; _winner: string }
         Returns: undefined
