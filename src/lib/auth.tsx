@@ -13,6 +13,15 @@ interface Profile {
   server: string;
   token_balance: number;
   avatar_url: string | null;
+  country?: string | null;
+  gang_faction?: string | null;
+  gang_type?: string | null;
+  is_banned?: boolean;
+  ban_reason?: string | null;
+  is_muted?: boolean;
+  mute_reason?: string | null;
+  is_restricted?: boolean;
+  restrict_reason?: string | null;
 }
 
 interface AuthContextValue {
@@ -63,13 +72,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  // Realtime profile balance updates
+  // Realtime profile updates + auto-kick on ban
   useEffect(() => {
     if (!session?.user) return;
     const ch = supabase
       .channel(`profile:${session.user.id}`)
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${session.user.id}` },
-        (payload) => setProfile(payload.new as Profile))
+        (payload) => {
+          const np = payload.new as Profile;
+          setProfile(np);
+          if (np.is_banned) {
+            supabase.auth.signOut().then(() => {
+              window.location.href = `/login?banned=1&reason=${encodeURIComponent(np.ban_reason ?? "")}`;
+            });
+          }
+        })
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [session?.user?.id]);
