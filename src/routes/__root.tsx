@@ -70,6 +70,8 @@ function RootComponent() {
           <main className="flex-1"><Outlet /></main>
         </div>
         <BetSlipFab />
+        <ConfirmDialogHost />
+        <PromptDialogHost />
         <Toaster theme="dark" position="top-right" />
       </BetSlipProvider>
     </AuthProvider>
