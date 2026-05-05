@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { BetSlipProvider } from "@/lib/betslip";
 import { BetSlipFab } from "@/components/BetSlip";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { ConfirmDialogHost, PromptDialogHost } from "@/components/ConfirmDialog";
 
 function NotFoundComponent() {
   return (
