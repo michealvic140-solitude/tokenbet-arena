@@ -241,7 +241,7 @@ function Leaderboard({ title, icon, rows }: { title: string; icon: React.ReactNo
 }
 
 function Footer() {
-  const [info, setInfo] = useState<{ about_us?: string; why_trust_us?: string; contact_email?: string; contact_phone?: string; contact_whatsapp?: string } | null>(null);
+  const [info, setInfo] = useState<{ about_us: string | null; why_trust_us: string | null; contact_email: string | null; contact_phone: string | null; contact_whatsapp: string | null } | null>(null);
   useEffect(() => {
     supabase.from("platform_settings").select("about_us, why_trust_us, contact_email, contact_phone, contact_whatsapp").eq("id", 1).maybeSingle().then(({ data }) => setInfo(data));
   }, []);
