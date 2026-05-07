@@ -52,9 +52,12 @@ export function NotificationBell() {
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-80 glass-strong border-primary/20 p-0" align="end">
-        <div className="flex items-center justify-between border-b border-white/5 p-3">
+        <div className="flex items-center justify-between gap-2 border-b border-white/5 p-3">
           <h3 className="text-sm font-bold">Notifications</h3>
-          {unread > 0 && <button onClick={markAll} className="text-xs text-primary hover:underline">Mark all read</button>}
+          <div className="flex items-center gap-2">
+            {unread > 0 && <button onClick={markAll} className="text-xs text-primary hover:underline">Mark all read</button>}
+            {items.length > 0 && <button onClick={clearAll} className="text-xs text-muted-foreground hover:text-destructive">Clear</button>}
+          </div>
         </div>
         <div className="max-h-96 overflow-y-auto">
           {items.length === 0 ? (
