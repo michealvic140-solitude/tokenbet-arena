@@ -194,17 +194,17 @@ function UserDetailDialog({ user, onClose, onChanged }: { user: UserRow | null; 
 
   const ban = async (mode: boolean) => {
     const reason = mode ? window.prompt("Ban reason:") ?? "" : "";
-    const { error } = await supabase.rpc("admin_ban_user", { _user_id: user.id, _ban: mode, _reason: reason || null });
+    const { error } = await supabase.rpc("admin_ban_user", { _user_id: user.id, _ban: mode, _reason: reason || undefined });
     if (error) toast.error(error.message); else { toast.success(mode ? "User banned" : "Ban lifted"); onChanged(); onClose(); }
   };
   const mute = async (mode: boolean) => {
     const reason = mode ? window.prompt("Mute reason:") ?? "" : "";
-    const { error } = await supabase.rpc("admin_mute_user", { _user_id: user.id, _mute: mode, _reason: reason || null });
+    const { error } = await supabase.rpc("admin_mute_user", { _user_id: user.id, _mute: mode, _reason: reason || undefined });
     if (error) toast.error(error.message); else { toast.success(mode ? "Muted" : "Unmuted"); onChanged(); }
   };
   const restrict = async (mode: boolean) => {
     const reason = mode ? window.prompt("Restriction reason:") ?? "" : "";
-    const { error } = await supabase.rpc("admin_restrict_user", { _user_id: user.id, _restrict: mode, _reason: reason || null });
+    const { error } = await supabase.rpc("admin_restrict_user", { _user_id: user.id, _restrict: mode, _reason: reason || undefined });
     if (error) toast.error(error.message); else { toast.success(mode ? "Restricted" : "Unrestricted"); onChanged(); }
   };
   const grant = async () => {
