@@ -156,30 +156,8 @@ function HomePage() {
         </section>
       )}
 
-      {/* Events */}
-      {events.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            <Calendar className="h-4 w-4 text-accent" /> Upcoming Events
-          </h2>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {events.map((e) => (
-              <div key={e.id} className="shrink-0 w-72 glass-strong rounded-2xl overflow-hidden hover:scale-[1.02] transition">
-                {e.image_url ? (
-                  <img src={e.image_url} alt={e.title} className="h-32 w-full object-cover" />
-                ) : (
-                  <div className="h-32 bg-gold-gradient flex items-center justify-center"><Trophy className="h-12 w-12 text-accent-foreground/60" /></div>
-                )}
-                <div className="p-4">
-                  <h3 className="font-black truncate">{e.title}</h3>
-                  {e.description && <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{e.description}</p>}
-                  {e.countdown_to && <div className="mt-2"><Countdown to={e.countdown_to} /></div>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Bold Event Countdown banner */}
+      <EventCountdownBanner />
 
       {/* Category tabs */}
       <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
