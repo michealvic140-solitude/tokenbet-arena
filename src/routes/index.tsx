@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Flame, Trophy, Sparkles, TrendingUp, Megaphone, Users, Crown, Calendar } from "lucide-react";
+import { Flame, Trophy, Sparkles, TrendingUp, Megaphone, Users, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Countdown } from "@/components/Countdown";
 import { useBetSlip } from "@/lib/betslip";
+import { EventCountdownBanner } from "@/components/EventCountdownBanner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
