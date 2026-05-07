@@ -137,6 +137,9 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Bold Event Countdown banner — below nav, above announcements */}
+      <EventCountdownBanner />
+
       {/* Announcements */}
       {anns.length > 0 && (
         <section className="mb-6 overflow-hidden rounded-2xl glass-gold relative h-32 sm:h-36">
@@ -155,9 +158,6 @@ function HomePage() {
           </div>
         </section>
       )}
-
-      {/* Bold Event Countdown banner */}
-      <EventCountdownBanner />
 
       {/* Category tabs */}
       <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
