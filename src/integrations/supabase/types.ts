@@ -1305,12 +1305,25 @@ export type Database = {
         Args: { _ban: boolean; _reason?: string; _user_id: string }
         Returns: undefined
       }
+      admin_broadcast: {
+        Args: { _body: string; _link?: string; _title: string }
+        Returns: number
+      }
       admin_grant_tokens: {
         Args: { _amount: number; _note?: string; _user_id: string }
         Returns: undefined
       }
       admin_mute_user: {
         Args: { _mute: boolean; _reason?: string; _user_id: string }
+        Returns: undefined
+      }
+      admin_notify_user: {
+        Args: {
+          _body: string
+          _link?: string
+          _title: string
+          _user_id: string
+        }
         Returns: undefined
       }
       admin_remove_tokens: {
@@ -1326,10 +1339,15 @@ export type Database = {
         Returns: undefined
       }
       book_by_code: { Args: { _code: string; _stake: number }; Returns: string }
+      broadcast_notification: {
+        Args: { _body: string; _link: string; _title: string }
+        Returns: undefined
+      }
       cashout_bet: {
         Args: { _bet_id: string; _fraction?: number }
         Returns: number
       }
+      clear_my_notifications: { Args: never; Returns: undefined }
       deny_token_request: {
         Args: { _admin_note?: string; _req_id: string }
         Returns: undefined
@@ -1343,6 +1361,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      end_match_by_score: {
+        Args: { _away_score: number; _home_score: number; _match_id: string }
+        Returns: undefined
+      }
       gen_booking_code: { Args: never; Returns: string }
       gen_ticket_code: { Args: never; Returns: string }
       has_role: {
@@ -1354,6 +1376,7 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_mod_or_admin: { Args: { _user_id: string }; Returns: boolean }
+      mark_all_notifications_read: { Args: never; Returns: undefined }
       place_bet: {
         Args: { _selections: Json; _stake: number }
         Returns: string

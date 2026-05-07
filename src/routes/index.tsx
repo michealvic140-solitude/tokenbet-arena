@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Flame, Trophy, Sparkles, TrendingUp, Megaphone, Users, Crown, Calendar } from "lucide-react";
+import { Flame, Trophy, Sparkles, TrendingUp, Megaphone, Users, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Countdown } from "@/components/Countdown";
 import { useBetSlip } from "@/lib/betslip";
+import { EventCountdownBanner } from "@/components/EventCountdownBanner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,7 +35,7 @@ function HomePage() {
   const [activeCat, setActiveCat] = useState<string>("popular");
   const [matches, setMatches] = useState<Match[]>([]);
   const [odds, setOdds] = useState<Odd[]>([]);
-  const [events, setEvents] = useState<Evt[]>([]);
+  const [, setEvents] = useState<Evt[]>([]);
   const [anns, setAnns] = useState<Ann[]>([]);
   const [lbf, setLbf] = useState<LBF[]>([]);
   const [lbp, setLbp] = useState<LBP[]>([]);
@@ -136,6 +137,9 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Bold Event Countdown banner — below nav, above announcements */}
+      <EventCountdownBanner />
+
       {/* Announcements */}
       {anns.length > 0 && (
         <section className="mb-6 overflow-hidden rounded-2xl glass-gold relative h-32 sm:h-36">
@@ -151,31 +155,6 @@ function HomePage() {
           ))}
           <div className="absolute bottom-2 right-3 flex gap-1">
             {anns.map((_, i) => <span key={i} className={`h-1.5 rounded-full transition-all ${i === annIdx ? "w-6 bg-accent" : "w-1.5 bg-white/30"}`} />)}
-          </div>
-        </section>
-      )}
-
-      {/* Events */}
-      {events.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            <Calendar className="h-4 w-4 text-accent" /> Upcoming Events
-          </h2>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {events.map((e) => (
-              <div key={e.id} className="shrink-0 w-72 glass-strong rounded-2xl overflow-hidden hover:scale-[1.02] transition">
-                {e.image_url ? (
-                  <img src={e.image_url} alt={e.title} className="h-32 w-full object-cover" />
-                ) : (
-                  <div className="h-32 bg-gold-gradient flex items-center justify-center"><Trophy className="h-12 w-12 text-accent-foreground/60" /></div>
-                )}
-                <div className="p-4">
-                  <h3 className="font-black truncate">{e.title}</h3>
-                  {e.description && <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{e.description}</p>}
-                  {e.countdown_to && <div className="mt-2"><Countdown to={e.countdown_to} /></div>}
-                </div>
-              </div>
-            ))}
           </div>
         </section>
       )}
