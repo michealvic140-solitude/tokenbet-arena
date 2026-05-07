@@ -35,7 +35,7 @@ function HomePage() {
   const [activeCat, setActiveCat] = useState<string>("popular");
   const [matches, setMatches] = useState<Match[]>([]);
   const [odds, setOdds] = useState<Odd[]>([]);
-  const [events, setEvents] = useState<Evt[]>([]);
+  const [, setEvents] = useState<Evt[]>([]);
   const [anns, setAnns] = useState<Ann[]>([]);
   const [lbf, setLbf] = useState<LBF[]>([]);
   const [lbp, setLbp] = useState<LBP[]>([]);
