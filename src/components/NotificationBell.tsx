@@ -29,8 +29,12 @@ export function NotificationBell() {
 
   const markAll = async () => {
     if (!user) return;
-    await supabase.from("notifications").update({ read_at: new Date().toISOString() })
-      .eq("user_id", user.id).is("read_at", null);
+    await supabase.rpc("mark_all_notifications_read");
+    load();
+  };
+  const clearAll = async () => {
+    if (!user) return;
+    await supabase.rpc("clear_my_notifications");
     load();
   };
 
