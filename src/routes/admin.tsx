@@ -1253,7 +1253,7 @@ function WithdrawalsAdmin() {
   useEffect(() => { load(); }, [filter]);
 
   const act = async (id: string, approve: boolean) => {
-    const note = window.prompt(approve ? "Approval message (instructions for user):" : "Decline reason:") ?? null;
+    const note = window.prompt(approve ? "Approval message (instructions for user):" : "Decline reason:") ?? undefined;
     const fn = approve ? "approve_withdrawal" : "decline_withdrawal";
     const { error } = await supabase.rpc(fn, { _id: id, _note: note });
     if (error) { toast.error(error.message); return; }
@@ -1345,9 +1345,10 @@ function TicketsAdmin() {
 
   const setStatus = async (status: "open" | "closed" | "resolved") => {
     if (!active) return;
-    const patch: Record<string, unknown> = { status };
-    if (status !== "open") patch.closed_at = new Date().toISOString();
-    else patch.closed_at = null;
+    const patch: { status: "open" | "closed" | "reported"; closed_at: string | null } = {
+      status: status === "resolved" ? "closed" : status,
+      closed_at: status === "open" ? null : new Date().toISOString(),
+    };
     const { error } = await supabase.from("support_tickets").update(patch).eq("id", active.id);
     if (error) { toast.error(error.message); return; }
     toast.success(`Ticket ${status}`);
