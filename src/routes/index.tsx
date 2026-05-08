@@ -27,8 +27,8 @@ interface Match {
 interface Odd { match_id: string; market: string; selection: string; value: number }
 interface Evt { id: string; title: string; description: string | null; image_url: string | null; countdown_to: string | null }
 interface Ann { id: string; title: string | null; description: string | null; image_url: string | null; link: string | null }
-interface LBF { id: string; rank: number; name: string; type: string; score: number }
-interface LBP { id: string; rank: number; player_name: string; gang_or_faction: string | null; gf_type: string | null; player_role: string | null; score: number }
+interface LBF { id: string; rank: number; name: string; type: string; score: number; top_player: string | null; wins: number; losses: number; draws: number; played: number; points: number }
+interface LBP { id: string; rank: number; player_name: string; gang_or_faction: string | null; gf_type: string | null; player_role: string | null; score: number; wins: number; losses: number; played: number; points: number }
 
 function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -186,8 +186,8 @@ function HomePage() {
 
       {/* Leaderboards */}
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
-        <Leaderboard title="Top Factions / Gangs" icon={<Users className="h-4 w-4 text-accent" />} rows={lbf.map((r) => ({ rank: r.rank, name: r.name, sub: r.type, score: r.score }))} />
-        <Leaderboard title="Best Shooters" icon={<Crown className="h-4 w-4 text-accent" />} rows={lbp.map((r) => ({ rank: r.rank, name: r.player_name, sub: `${r.gang_or_faction ?? "—"} (${r.gf_type ?? "?"})`, role: r.player_role, score: r.score }))} />
+        <FactionTable rows={lbf} />
+        <ShootersTable rows={lbp} />
       </div>
 
       {/* Footer */}
@@ -196,25 +196,72 @@ function HomePage() {
   );
 }
 
-function Leaderboard({ title, icon, rows }: { title: string; icon: React.ReactNode; rows: { rank: number; name: string; sub: string; role?: string | null; score: number }[] }) {
+const medal = (r: number) => r === 1 ? "🥇" : r === 2 ? "🥈" : r === 3 ? "🥉" : `#${r}`;
+
+function FactionTable({ rows }: { rows: LBF[] }) {
   return (
-    <div className="glass-strong rounded-2xl p-4">
-      <h3 className="mb-3 flex items-center gap-2 font-bold">{icon} {title}</h3>
-      {rows.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">Leaderboard updates weekly</p> :
-        <div className="divide-y divide-white/5">
-          {rows.map((r) => (
-            <div key={r.rank} className="flex items-center gap-3 py-2">
-              <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-black ${r.rank === 1 ? "bg-gold-gradient text-accent-foreground" : r.rank === 2 ? "bg-white/20 text-white" : r.rank === 3 ? "bg-amber-700/40 text-amber-200" : "bg-white/5 text-muted-foreground"}`}>
-                {r.rank}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-bold truncate">{r.name}</div>
-                <div className="text-xs text-muted-foreground truncate">{r.sub}{r.role && ` · ${r.role}`}</div>
-              </div>
-              <div className="font-mono font-black tabular-nums text-gold">{r.score.toLocaleString()}</div>
-            </div>
-          ))}
-        </div>}
+    <div className="glass-strong rounded-2xl p-4 overflow-x-auto">
+      <h3 className="mb-3 flex items-center gap-2 font-bold"><Users className="h-4 w-4 text-accent" /> Top Factions / Gangs</h3>
+      {rows.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">Leaderboard updates weekly</p> : (
+        <table className="w-full text-xs">
+          <thead className="text-muted-foreground">
+            <tr className="text-left">
+              <th className="py-2">#</th><th>Faction</th><th>Top Player</th>
+              <th className="text-center">P</th><th className="text-center text-success">W</th>
+              <th className="text-center text-primary">L</th><th className="text-center">D</th>
+              <th className="text-right text-gold">PTS</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {rows.map((r) => (
+              <tr key={r.id} className="hover:bg-white/5">
+                <td className="py-2 font-black">{medal(r.rank)}</td>
+                <td className="font-bold truncate max-w-[120px]">{r.name}<div className="text-[10px] font-normal text-muted-foreground">{r.type}</div></td>
+                <td className="truncate max-w-[100px]">{r.top_player ?? "—"}</td>
+                <td className="text-center font-mono">{r.played}</td>
+                <td className="text-center font-mono text-success">{r.wins}</td>
+                <td className="text-center font-mono text-primary">{r.losses}</td>
+                <td className="text-center font-mono">{r.draws}</td>
+                <td className="text-right font-mono font-black text-gold">{r.points}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+function ShootersTable({ rows }: { rows: LBP[] }) {
+  return (
+    <div className="glass-strong rounded-2xl p-4 overflow-x-auto">
+      <h3 className="mb-3 flex items-center gap-2 font-bold"><Crown className="h-4 w-4 text-accent" /> Top Shooters</h3>
+      {rows.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">Leaderboard updates weekly</p> : (
+        <table className="w-full text-xs">
+          <thead className="text-muted-foreground">
+            <tr className="text-left">
+              <th className="py-2">#</th><th>Player</th><th>Gang</th>
+              <th className="text-center text-success">Won</th>
+              <th className="text-center text-primary">Lost</th>
+              <th className="text-center">Total</th>
+              <th className="text-right text-gold">PTS</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {rows.map((r) => (
+              <tr key={r.id} className="hover:bg-white/5">
+                <td className="py-2 font-black">{medal(r.rank)}</td>
+                <td className="font-bold truncate max-w-[120px]">{r.player_name}{r.player_role && <div className="text-[10px] font-normal text-muted-foreground">{r.player_role}</div>}</td>
+                <td className="truncate max-w-[100px] text-muted-foreground">{r.gang_or_faction ?? "—"}</td>
+                <td className="text-center font-mono text-success">{r.wins}</td>
+                <td className="text-center font-mono text-primary">{r.losses}</td>
+                <td className="text-center font-mono">{r.played}</td>
+                <td className="text-right font-mono font-black text-gold">{r.points}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
