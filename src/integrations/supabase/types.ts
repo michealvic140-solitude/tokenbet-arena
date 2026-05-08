@@ -533,34 +533,52 @@ export type Database = {
       }
       leaderboard_factions: {
         Row: {
+          draws: number
           id: string
+          losses: number
           name: string
           notes: string | null
+          played: number
+          points: number
           rank: number
           score: number
+          top_player: string | null
           type: string
           updated_at: string
           week_start: string
+          wins: number
         }
         Insert: {
+          draws?: number
           id?: string
+          losses?: number
           name: string
           notes?: string | null
+          played?: number
+          points?: number
           rank: number
           score?: number
+          top_player?: string | null
           type: string
           updated_at?: string
           week_start?: string
+          wins?: number
         }
         Update: {
+          draws?: number
           id?: string
+          losses?: number
           name?: string
           notes?: string | null
+          played?: number
+          points?: number
           rank?: number
           score?: number
+          top_player?: string | null
           type?: string
           updated_at?: string
           week_start?: string
+          wins?: number
         }
         Relationships: []
       }
@@ -569,34 +587,46 @@ export type Database = {
           gang_or_faction: string | null
           gf_type: string | null
           id: string
+          losses: number
+          played: number
           player_name: string
           player_role: string | null
+          points: number
           rank: number
           score: number
           updated_at: string
           week_start: string
+          wins: number
         }
         Insert: {
           gang_or_faction?: string | null
           gf_type?: string | null
           id?: string
+          losses?: number
+          played?: number
           player_name: string
           player_role?: string | null
+          points?: number
           rank: number
           score?: number
           updated_at?: string
           week_start?: string
+          wins?: number
         }
         Update: {
           gang_or_faction?: string | null
           gf_type?: string | null
           id?: string
+          losses?: number
+          played?: number
           player_name?: string
           player_role?: string | null
+          points?: number
           rank?: number
           score?: number
           updated_at?: string
           week_start?: string
+          wins?: number
         }
         Relationships: []
       }
@@ -1296,6 +1326,48 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawal_requests: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          created_at: string
+          id: string
+          ingame_gang: string
+          ingame_name: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["withdrawal_status"]
+          ticket_ref: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          created_at?: string
+          id?: string
+          ingame_gang: string
+          ingame_name: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          ticket_ref?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          created_at?: string
+          id?: string
+          ingame_gang?: string
+          ingame_name?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          ticket_ref?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1338,6 +1410,10 @@ export type Database = {
         Args: { _admin_note?: string; _req_id: string }
         Returns: undefined
       }
+      approve_withdrawal: {
+        Args: { _id: string; _note?: string }
+        Returns: undefined
+      }
       book_by_code: { Args: { _code: string; _stake: number }; Returns: string }
       broadcast_notification: {
         Args: { _body: string; _link: string; _title: string }
@@ -1348,6 +1424,10 @@ export type Database = {
         Returns: number
       }
       clear_my_notifications: { Args: never; Returns: undefined }
+      decline_withdrawal: {
+        Args: { _id: string; _note?: string }
+        Returns: undefined
+      }
       deny_token_request: {
         Args: { _admin_note?: string; _req_id: string }
         Returns: undefined
@@ -1382,6 +1462,15 @@ export type Database = {
         Returns: string
       }
       redeem_promo: { Args: { _code: string }; Returns: number }
+      request_withdrawal: {
+        Args: {
+          _amount: number
+          _ingame_gang: string
+          _ingame_name: string
+          _ticket_ref?: string
+        }
+        Returns: string
+      }
       settle_match: {
         Args: { _match_id: string; _winner: string }
         Returns: undefined
@@ -1409,6 +1498,7 @@ export type Database = {
         | "bet_refund"
         | "cashout"
         | "adjustment"
+      withdrawal_status: "pending" | "approved" | "declined"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1559,6 +1649,7 @@ export const Constants = {
         "cashout",
         "adjustment",
       ],
+      withdrawal_status: ["pending", "approved", "declined"],
     },
   },
 } as const
