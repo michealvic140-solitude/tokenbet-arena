@@ -1228,3 +1228,189 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
     </div>
   );
 }
+
+// ============== WITHDRAWALS ADMIN ==============
+interface WReq { id: string; user_id: string; ingame_name: string; ingame_gang: string; amount: number; ticket_ref: string | null; status: string; admin_note: string | null; created_at: string; reviewed_at: string | null }
+function WithdrawalsAdmin() {
+  const [reqs, setReqs] = useState<WReq[]>([]);
+  const [filter, setFilter] = useState<"pending" | "approved" | "declined" | "all">("pending");
+  const [users, setUsers] = useState<Record<string, { full_name: string; email: string | null }>>({});
+
+  const load = async () => {
+    let q = supabase.from("withdrawal_requests").select("*").order("created_at", { ascending: false });
+    if (filter !== "all") q = q.eq("status", filter);
+    const { data } = await q;
+    const list = (data ?? []) as WReq[];
+    setReqs(list);
+    if (list.length) {
+      const ids = [...new Set(list.map((r) => r.user_id))];
+      const { data: ps } = await supabase.from("profiles").select("id, full_name, email").in("id", ids);
+      const map: Record<string, { full_name: string; email: string | null }> = {};
+      (ps ?? []).forEach((p: { id: string; full_name: string; email: string | null }) => { map[p.id] = { full_name: p.full_name, email: p.email }; });
+      setUsers(map);
+    }
+  };
+  useEffect(() => { load(); }, [filter]);
+
+  const act = async (id: string, approve: boolean) => {
+    const note = window.prompt(approve ? "Approval message (instructions for user):" : "Decline reason:") ?? null;
+    const fn = approve ? "approve_withdrawal" : "decline_withdrawal";
+    const { error } = await supabase.rpc(fn, { _id: id, _note: note });
+    if (error) { toast.error(error.message); return; }
+    toast.success(approve ? "Approved" : "Declined & refunded");
+    load();
+  };
+
+  return (
+    <Section title="Withdrawal Requests" action={
+      <div className="flex gap-1">
+        {(["pending", "approved", "declined", "all"] as const).map((f) => (
+          <Button key={f} size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)}>{f}</Button>
+        ))}
+      </div>
+    }>
+      {reqs.length === 0 ? <div className="py-6 text-center text-sm text-muted-foreground">No requests</div> : (
+        <div className="space-y-2">
+          {reqs.map((r) => (
+            <div key={r.id} className="rounded-lg bg-secondary/40 p-3 text-sm">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <div className="font-bold">{users[r.user_id]?.full_name ?? "User"} <span className="text-xs text-muted-foreground">({users[r.user_id]?.email ?? "—"})</span></div>
+                  <div className="text-xs text-muted-foreground">In-game: <span className="text-foreground font-semibold">{r.ingame_name}</span> · Gang: <span className="text-foreground font-semibold">{r.ingame_gang}</span></div>
+                  {r.ticket_ref && <div className="text-xs">Ticket ref: <span className="font-mono">{r.ticket_ref}</span></div>}
+                  <div className="text-[11px] text-muted-foreground">{new Date(r.created_at).toLocaleString()}</div>
+                </div>
+                <div className="text-right">
+                  <div className="font-mono text-2xl font-black text-gold">{formatTokens(r.amount)}</div>
+                  <span className={`inline-block rounded px-2 py-0.5 text-[10px] uppercase font-bold ${r.status === "pending" ? "bg-amber-500/20 text-amber-300" : r.status === "approved" ? "bg-success/20 text-success" : "bg-destructive/20 text-destructive"}`}>{r.status}</span>
+                </div>
+              </div>
+              {r.admin_note && <div className="mt-2 rounded bg-background/40 p-2 text-xs"><span className="text-muted-foreground">Admin note:</span> {r.admin_note}</div>}
+              {r.status === "pending" && (
+                <div className="mt-2 flex gap-2">
+                  <Button size="sm" onClick={() => act(r.id, true)} className="bg-success/80 hover:bg-success">Approve</Button>
+                  <Button size="sm" variant="destructive" onClick={() => act(r.id, false)}>Decline & refund</Button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </Section>
+  );
+}
+
+// ============== TICKETS ADMIN ==============
+interface STicket { id: string; user_id: string; subject: string; status: string; created_at: string; closed_at: string | null }
+interface TMsg { id: string; ticket_id: string; user_id: string; content: string | null; image_url: string | null; created_at: string }
+function TicketsAdmin() {
+  const [tickets, setTickets] = useState<STicket[]>([]);
+  const [filter, setFilter] = useState<"open" | "closed" | "all">("open");
+  const [active, setActive] = useState<STicket | null>(null);
+  const [msgs, setMsgs] = useState<TMsg[]>([]);
+  const [reply, setReply] = useState("");
+  const [users, setUsers] = useState<Record<string, string>>({});
+
+  const load = async () => {
+    let q = supabase.from("support_tickets").select("*").order("created_at", { ascending: false });
+    if (filter !== "all") q = q.eq("status", filter);
+    const { data } = await q;
+    const list = (data ?? []) as STicket[];
+    setTickets(list);
+    if (list.length) {
+      const ids = [...new Set(list.map((t) => t.user_id))];
+      const { data: ps } = await supabase.from("profiles").select("id, full_name").in("id", ids);
+      const map: Record<string, string> = {};
+      (ps ?? []).forEach((p: { id: string; full_name: string }) => { map[p.id] = p.full_name; });
+      setUsers(map);
+    }
+  };
+  useEffect(() => { load(); }, [filter]);
+
+  const openTicket = async (t: STicket) => {
+    setActive(t);
+    const { data } = await supabase.from("ticket_messages").select("*").eq("ticket_id", t.id).order("created_at");
+    setMsgs((data ?? []) as TMsg[]);
+  };
+
+  const send = async () => {
+    if (!active || !reply.trim()) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { error } = await supabase.from("ticket_messages").insert({ ticket_id: active.id, user_id: user.id, content: reply });
+    if (error) { toast.error(error.message); return; }
+    setReply("");
+    openTicket(active);
+  };
+
+  const setStatus = async (status: "open" | "closed" | "resolved") => {
+    if (!active) return;
+    const patch: Record<string, unknown> = { status };
+    if (status !== "open") patch.closed_at = new Date().toISOString();
+    else patch.closed_at = null;
+    const { error } = await supabase.from("support_tickets").update(patch).eq("id", active.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Ticket ${status}`);
+    setActive({ ...active, status });
+    load();
+  };
+
+  const del = async () => {
+    if (!active) return;
+    if (!confirm("Delete ticket permanently?")) return;
+    await supabase.from("support_tickets").delete().eq("id", active.id);
+    toast.success("Deleted");
+    setActive(null);
+    load();
+  };
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
+      <Section title="Tickets" action={
+        <div className="flex gap-1">
+          {(["open", "closed", "all"] as const).map((f) => (
+            <Button key={f} size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)}>{f}</Button>
+          ))}
+        </div>
+      }>
+        <div className="space-y-1.5 max-h-[600px] overflow-y-auto">
+          {tickets.length === 0 ? <div className="py-6 text-center text-sm text-muted-foreground">No tickets</div> : tickets.map((t) => (
+            <button key={t.id} onClick={() => openTicket(t)} className={`w-full text-left rounded-lg p-2.5 text-sm transition ${active?.id === t.id ? "bg-primary/20 border border-primary/40" : "bg-secondary/40 hover:bg-secondary"}`}>
+              <div className="flex items-center justify-between">
+                <span className="font-bold truncate">{t.subject}</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase ${t.status === "open" ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}>{t.status}</span>
+              </div>
+              <div className="text-xs text-muted-foreground truncate">{users[t.user_id] ?? "User"} · {new Date(t.created_at).toLocaleString()}</div>
+            </button>
+          ))}
+        </div>
+      </Section>
+
+      <Section title={active ? active.subject : "Select a ticket"}>
+        {!active ? <div className="py-12 text-center text-sm text-muted-foreground">Pick a ticket to view conversation</div> : (
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => setStatus("open")}>Reopen</Button>
+              <Button size="sm" variant="outline" onClick={() => setStatus("closed")}>Close</Button>
+              <Button size="sm" variant="outline" onClick={() => setStatus("resolved")}>Mark resolved</Button>
+              <Button size="sm" variant="destructive" onClick={del}>Delete</Button>
+            </div>
+            <div className="space-y-2 max-h-[400px] overflow-y-auto rounded-lg bg-background/40 p-3">
+              {msgs.length === 0 ? <div className="text-sm text-muted-foreground">No messages</div> : msgs.map((m) => (
+                <div key={m.id} className={`rounded-lg p-2.5 text-sm ${m.user_id === active.user_id ? "bg-secondary/60" : "bg-primary/15 ml-8"}`}>
+                  <div className="text-[10px] text-muted-foreground mb-1">{m.user_id === active.user_id ? users[m.user_id] ?? "User" : "Admin"} · {new Date(m.created_at).toLocaleString()}</div>
+                  {m.content && <div className="whitespace-pre-wrap">{m.content}</div>}
+                  {m.image_url && <img src={m.image_url} alt="attachment" className="mt-2 max-h-64 rounded" />}
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Textarea value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Reply…" rows={2} />
+              <Button onClick={send} className="bg-gold-gradient text-accent-foreground">Send</Button>
+            </div>
+          </div>
+        )}
+      </Section>
+    </div>
+  );
+}
