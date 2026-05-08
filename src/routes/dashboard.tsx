@@ -9,6 +9,7 @@ import { RoleBadge } from "@/components/RoleBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { WithdrawButton } from "@/components/WithdrawDialog";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — SHOOTERS BET" }] }),
@@ -75,13 +76,16 @@ function DashboardPage() {
             {roles.map((r) => <RoleBadge key={r} role={r} />)}
           </div>
         </div>
-        <Link to="/tokens" className="inline-flex items-center gap-3 rounded-xl glass-gold px-5 py-3 transition hover:scale-[1.02]">
-          <Coins className="h-6 w-6 text-accent" />
-          <div className="text-right">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground">Balance</div>
-            <div className="text-xl font-black tabular-nums text-gold">{formatTokens(profile.token_balance)}</div>
-          </div>
-        </Link>
+        <div className="flex items-center gap-2">
+          <WithdrawButton />
+          <Link to="/tokens" className="inline-flex items-center gap-3 rounded-xl glass-gold px-5 py-3 transition hover:scale-[1.02]">
+            <Coins className="h-6 w-6 text-accent" />
+            <div className="text-right">
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">Balance</div>
+              <div className="text-xl font-black tabular-nums text-gold">{formatTokens(profile.token_balance)}</div>
+            </div>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
