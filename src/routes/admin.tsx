@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Shield, Coins, Users, Layers, Trophy, Calculator, ScrollText, Check, X,
   Megaphone, CalendarClock, Gift, Settings as SettingsIcon, FileText, Sparkles,
-  Bot, BarChart3, Image as ImageIcon, MessageSquareWarning, Crown,
+  Bot, BarChart3, Image as ImageIcon, MessageSquareWarning, Crown, ArrowDownToLine, LifeBuoy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,6 +57,8 @@ function AdminPage() {
           <Tab v="leaderboards" i={<Crown className="h-4 w-4" />}>Leaderboards</Tab>
           <Tab v="terms" i={<FileText className="h-4 w-4" />}>Terms</Tab>
           <Tab v="appeals" i={<MessageSquareWarning className="h-4 w-4" />}>Appeals</Tab>
+          <Tab v="tickets" i={<LifeBuoy className="h-4 w-4" />}>Tickets</Tab>
+          <Tab v="withdrawals" i={<ArrowDownToLine className="h-4 w-4" />}>Withdrawals</Tab>
           <Tab v="ai" i={<Bot className="h-4 w-4" />}>AI Logs</Tab>
           <Tab v="settings" i={<SettingsIcon className="h-4 w-4" />}>Settings</Tab>
           <Tab v="calc" i={<Calculator className="h-4 w-4" />}>Calc</Tab>
@@ -72,6 +74,8 @@ function AdminPage() {
         <TabsContent value="leaderboards"><LeaderboardsAdmin /></TabsContent>
         <TabsContent value="terms"><TermsAdmin /></TabsContent>
         <TabsContent value="appeals"><AppealsAdmin /></TabsContent>
+        <TabsContent value="tickets"><TicketsAdmin /></TabsContent>
+        <TabsContent value="withdrawals"><WithdrawalsAdmin /></TabsContent>
         <TabsContent value="ai"><AILogsAdmin /></TabsContent>
         <TabsContent value="settings"><SettingsAdmin /></TabsContent>
         <TabsContent value="calc"><OddsCalculator /></TabsContent>
