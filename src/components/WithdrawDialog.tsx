@@ -26,7 +26,7 @@ export function WithdrawButton() {
     if (amt > (profile?.token_balance ?? 0)) { toast.error("Amount exceeds your balance"); return; }
     setBusy(true);
     const { error } = await supabase.rpc("request_withdrawal", {
-      _ingame_name: name, _ingame_gang: gang, _amount: amt, _ticket_ref: ref || null,
+      _ingame_name: name, _ingame_gang: gang, _amount: amt, _ticket_ref: ref || undefined,
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
